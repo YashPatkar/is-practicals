@@ -19,6 +19,9 @@ on pc1's command prompt ------
 
 > ping 172.22.34.62
 > ftp 172.22.34.62
+
+username and password = cisco -------
+
 > ping (ip of pc2)
 
 
