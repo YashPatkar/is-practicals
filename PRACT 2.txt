@@ -1,0 +1,103 @@
+
+## ✅ **PART 1: Local AAA Authentication for Console Access on R1**
+
+### 🔧 On **Router R1** (in CLI):
+conf t
+username Admin1 secret admin1pa55
+aaa new-model
+aaa authentication login default local
+line console 0
+login authentication default
+exit
+
+
+ping 192.168.1.2    ← (PC-A to PC-B)
+ping 192.168.1.3    ← (PC-A to PC-C)
+ping 192.168.1.3    ← (PC-B to PC-C)
+
+
+### 🔧 On **Router R1** (in CLI):
+
+conf t
+ip domain-name ccnasecurity.com
+crypto key generate rsa
+1024
+aaa authentication login SSH-LOGIN local
+line vty 0 4
+login authentication SSH-LOGIN
+transport input ssh
+exit
+
+### 💻 On **PC-A** (in **Command Prompt / Desktop > Command Prompt**):
+
+ssh -l Admin1 192.168.1.1
+# Enter password when prompted:
+admin1pa55
+
+
+## ✅ **PART 3: Server-Based AAA (TACACS+) on R2**
+
+### 🔧 On **Router R2** (in CLI):
+
+conf t
+username Admin2 secret admin2pa55
+tacacs-server host 192.168.2.2
+tacacs-server key tacacspa55
+aaa new-model
+aaa authentication login default group tacacs+ local
+line console 0
+login authentication default
+exit
+
+
+### 🖥️ On **TACACS+ Server** (in GUI):
+- Go to **Desktop > Services > AAA**
+- Under **Network Configuration**, add **R2’s IP**
+- Under **User Setup**, add:
+  - Username: `Admin2`
+  - Password: `admin2pa55`
+
+---
+
+## ✅ **PART 4: Server-Based AAA (RADIUS) on R3**
+
+### 🔧 On **Router R3** (in CLI):
+
+conf t
+username Admin3 secret admin3pa55
+radius-server host 192.168.3.2
+radius-server key radiuspa55
+aaa new-model
+aaa authentication login default group radius local
+line console 0
+login authentication default
+exit
+
+
+### 🖥️ On **RADIUS Server** (in GUI):
+- Go to **Desktop > Services > AAA**
+- Under **Network Configuration**, add **R3’s IP**
+- Under **User Setup**, add:
+  - Username: `Admin3`
+  - Password: `admin3pa55`
+
+---
+
+## 🧪 Optional: Final Verification for Each Router (R1, R2, R3)
+
+After saving configs, **exit the router CLI** to test login:
+
+```bash
+exit
+```
+
+Then press **Enter again**, and you should see:
+```
+User Access Verification
+Username: AdminX
+Password: adminXpa55
+```
+
+---
+
+Let me know if you want a **.pkt Packet Tracer file**, or I can help you step-by-step while you configure it!
