@@ -1,0 +1,48 @@
+practical 3 - Configuring Extended ACLs
+
+===================================== PART 1 =============================================
+
+go to Router R1 -------
+
+> en
+> config t
+> access-list ?
+> access-list 100 permit ?
+
+> access-list 100 permit tcp 172.22.34.64 0.0.0.31 host 172.22.34.62 eq ftp
+> access-list 100 permit icmp 172.22.34.64 0.0.0.31 host 172.22.34.62
+> interface gigabitEthernet0/0
+> ip access-group 100 in
+> exit
+
+on pc1's command prompt ------
+
+> ping 172.22.34.62
+> ftp 172.22.34.62
+> ping (ip of pc2)
+
+
+===================================== PART 2 ============================================
+
+go to Router R1 --------
+
+> en
+> config t
+> access-list ?
+> ip access-list extended HTTP_ONLY
+> permit tcp 172.22.34.96 0.0.0.15 host 172.22.34.62 eq www
+> permit icmp 172.22.34.96 0.0.0.15 host 172.22.34.62
+> exit
+R1(Config)> interface gigabitEthernet0/1
+> ip access-group HTTP_ONLY in
+> exit
+
+on pc2's command prompt  ---------
+
+> ping 172.22.34.62
+> ftp 172.22.34.62
+
+
+on pc2's Web browser ---------
+
+http://172.22.34.62
